@@ -65,6 +65,11 @@ def make_handler(service, token, ingress=False):
                 return self.respond(200,{'ok':True})
             if self.path == '/api/status':
                 return self.respond(200,service.status())
+            if self.path == '/api/source/frame':
+                content = service.capture.latest_frame() if service.capture else None
+                if content:
+                    return self.respond(200, content, 'image/jpeg')
+                return self.respond(404, {'error':'No recording frame has arrived yet.'})
             examples = {
                 'empty-day': ('floodlight-day.jpg','day-example.json','Daytime: empty parking area'),
                 'car-day': ('parked-day.jpg','parked-day.json','Daytime: valid parked charging reference'),

@@ -1,10 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- Add Ring capture with entity settings, capture status and latest-frame preview.
+- Check recording freshness and publish only the final result from each clip.
+
 ## 0.1.0
 
-- Initial experimental parking-zone and charging-placement calibration UI.
-- Local YOLOX-S inference, conservative gap estimation and freshness tracking.
-- MQTT discovery with an unavailable sensor before live observations.
-- HAOS add-on packaging, Supervisor MQTT service discovery and authenticated ingress.
-- Persistent calibration/model storage and Docker Compose development workflow.
-- Automatic Ring footage capture is not yet implemented.
+- Initial parking calibration, local detection and HAOS add-on with MQTT discovery.

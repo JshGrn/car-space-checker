@@ -71,7 +71,15 @@ def main():
     from .http import serve
     from .service import Service
     from .mqtt import Publisher
-    serve(Service(publisher=Publisher()), os.environ['CHECKER_TOKEN'], ingress=True)
+    from .ring import RingCapture
+    service = Service(publisher=Publisher())
+    capture = RingCapture(service, options)
+    service.capture = capture
+    capture.start()
+    try:
+        serve(service, os.environ['CHECKER_TOKEN'], ingress=True)
+    finally:
+        capture.close()
 
 
 if __name__ == '__main__':

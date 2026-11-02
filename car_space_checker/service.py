@@ -56,6 +56,7 @@ class Service:
         self.tracker = Tracker()
         self.lock = threading.RLock()
         self.last_published_state = None
+        self.capture = None
 
     def configure(self, settings):
         settings = validate_settings(settings)
@@ -91,7 +92,7 @@ class Service:
             result,zone,detections = self._assess(image,settings)
         return {**result,'preview_only':True,'image':annotated_image(image,zone,detections)}
 
-    def ingest(self, content, camera_id, observation_id, observed_at):
+    def ingest(self, content, camera_id, observation_id, observed_at, publish=True):
         with self.lock:
             if not self.settings or not self.settings['live_enabled']:
                 raise ValueError('Save a zone and enable live observations before submitting footage.')
@@ -110,9 +111,26 @@ class Service:
                 self.tracker.invalidate('Image processing failed; waiting for fresh evidence.')
                 self._publish(self.tracker.snapshot(self.clock()))
                 raise
-            if state['accepted']:
+            if state['accepted'] and publish:
                 self._publish(state)
             return {**state,'assessment':result['assessment'],'gap_car_lengths':result.get('gap_car_lengths')}
+
+    def invalidate(self, reason):
+        with self.lock:
+            self.tracker.invalidate(reason)
+            self._publish(self.tracker.snapshot(self.clock()))
+
+    def ingest_recording(self, samples, recording_id):
+        # Intermediate clear frames must not notify before the final frame is checked.
+        with self.lock:
+            last = None
+            for observed_at, content in samples:
+                last = self.ingest(content, 'floodlight', f'{recording_id}:{observed_at:.3f}', observed_at, publish=False)
+            if last is None or not last['accepted']:
+                self.tracker.invalidate('Final recording frame was rejected; waiting for fresh evidence.')
+            state = self.tracker.snapshot(self.clock())
+            self._publish(state)
+            return state
 
     def _publish(self, state):
         if self.publisher:
@@ -129,4 +147,5 @@ class Service:
         with self.lock:
             return {**self.tracker.snapshot(self.clock()),'settings':self.settings,
                     'mqtt_connected':bool(self.publisher and self.publisher.connected),
-                    'model_ready':MODEL_PATH.exists()}
+                    'model_ready':MODEL_PATH.exists(),
+                    'capture':self.capture.status() if self.capture else None}

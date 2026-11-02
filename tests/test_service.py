@@ -61,3 +61,40 @@ class ServiceTests(unittest.TestCase):
         for i, timestamp in enumerate([1000,1005,1010]): self.service.ingest(photo(i),'floodlight',str(i),timestamp)
         with self.assertRaises(ValueError): self.service.ingest(b'broken','floodlight','bad',1011)
         self.assertEqual(self.service.status()['state'],'unknown')
+
+class RecordingBatchTests(unittest.TestCase):
+    def test_only_final_recording_state_is_published(self):
+        from unittest.mock import Mock
+        with tempfile.TemporaryDirectory() as directory:
+            publisher=Mock()
+            service=Service(directory,detector=FixedDetector(),publisher=publisher,clock=lambda:1020)
+            service.configure(CONFIG)
+            publisher.reset_mock()
+            frames=[(1000,photo()),(1005,photo()),(1010,photo()),(1015,photo())]
+            # Isolate temporal batching from the vision model; test the production tracker/publisher.
+            assessments=iter(['clear','clear','clear','occupied'])
+            service._assess=lambda image,settings: ({'assessment':next(assessments)},None,[])
+            # Give each frame distinct pixels, as real compressed video frames normally have.
+            from PIL import Image
+            import io
+            frames=[]
+            for i in range(4):
+                data=io.BytesIO();Image.new('RGB',(100,100),(80+i,80,80)).save(data,format='PNG')
+                frames.append((1000+5*i,data.getvalue()))
+            service.ingest_recording(frames,'recording-1')
+            self.assertEqual(publisher.publish.call_count,1)
+            self.assertEqual(publisher.publish.call_args.args[0]['state'],'occupied')
+
+    def test_rejected_final_frame_cannot_publish_intermediate_availability(self):
+        from unittest.mock import Mock
+        with tempfile.TemporaryDirectory() as directory:
+            publisher=Mock();service=Service(directory,detector=FixedDetector(),publisher=publisher,clock=lambda:1020)
+            service.configure(CONFIG)
+            assessments=iter(['occupied','clear','clear','clear','occupied'])
+            service._assess=lambda image,settings: ({'assessment':next(assessments)},None,[])
+            service.ingest(photo(9),'floodlight','old-occupied',990)
+            service.ingest(photo(1),'floodlight','old-clear',1000)
+            publisher.reset_mock()
+            service.ingest_recording([(1005,photo(2)),(1010,photo(3)),(1015,photo(9))],'recording-1')
+            self.assertEqual(publisher.publish.call_count,1)
+            self.assertNotEqual(publisher.publish.call_args.args[0]['state'],'available')

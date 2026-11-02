@@ -1,10 +1,13 @@
 {
   "name": "Car Space Checker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "slug": "car_space_checker",
   "description": "Local floodlight parking-space calibration and MQTT sensor (experimental PoC)",
   "url": "https://github.com/JshGrn/car-space-checker",
-  "arch": ["amd64", "aarch64"],
+  "arch": [
+    "amd64",
+    "aarch64"
+  ],
   "startup": "application",
   "boot": "auto",
   "init": true,
@@ -13,8 +16,23 @@
   "panel_icon": "mdi:car-parking",
   "panel_title": "Car Space Checker",
   "panel_admin": true,
-  "services": ["mqtt:need"],
-  "options": {"instance_id": "parking_poc"},
-  "schema": {"instance_id": "match(^[a-z0-9_]{1,64}$)"},
-  "stage": "experimental"
+  "services": [
+    "mqtt:need"
+  ],
+  "options": {
+    "instance_id": "parking_poc",
+    "ring_enabled": false,
+    "recording_camera": "",
+    "recording_timestamp": "",
+    "motion_event": ""
+  },
+  "schema": {
+    "instance_id": "match(^[a-z0-9_]{1,64}$)",
+    "ring_enabled": "bool",
+    "recording_camera": "match(^(camera\\.[a-z0-9_]+)?$)",
+    "recording_timestamp": "match(^(sensor\\.[a-z0-9_]+)?$)",
+    "motion_event": "match(^(event\\.[a-z0-9_]+)?$)"
+  },
+  "stage": "experimental",
+  "homeassistant_api": true
 }

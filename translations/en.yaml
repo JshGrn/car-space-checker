@@ -1,0 +1,16 @@
+configuration:
+  instance_id:
+    name: MQTT instance ID
+    description: Keep this unchanged to preserve the sensor identity. Use a unique ID for each checker.
+  ring_enabled:
+    name: Enable Ring capture
+    description: Read new recordings from the configured Ring device. Live sensor publishing also requires saved calibration and enabled live observations.
+  recording_camera:
+    name: Recording camera
+    description: The Floodlight Last recording camera entity (camera.…), not Live view.
+  recording_timestamp:
+    name: Recording timestamp
+    description: The same Floodlight Last recording timestamp sensor (sensor.…).
+  motion_event:
+    name: Motion event
+    description: The same Floodlight Motion event entity (event.…).
