@@ -61,6 +61,17 @@ class RecordingGateTests(unittest.TestCase):
 
 
 class DownloadAndExtractionTests(unittest.TestCase):
+    def test_phoenix_recording_host_is_supported(self):
+        validate_video_url('https://download-eu-south-2.prod.phoenix.devices.amazon.dev/v1/download/example.mp4?signature=fixture')
+
+    def test_phoenix_lookalikes_and_unsafe_urls_are_rejected(self):
+        host='download-eu-south-2.prod.phoenix.devices.amazon.dev'
+        for url in [f'http://{host}/a', f'https://{host}.evil.test/a',
+                    f'https://evil.{host}/a', 'https://unrelated.amazon.dev/a',
+                    f'https://user:pass@{host}/a', f'https://{host}:8443/a']:
+            with self.subTest(url=url), self.assertRaises(CaptureError):
+                validate_video_url(url)
+
     def test_private_http_and_lookalike_hosts_rejected(self):
         for url in ['http://ring.com/a','https://127.0.0.1/a','https://ring.com.evil.test/a',
                     'https://evilring.com/a','https://user:pass@ring.com/a','file:///etc/passwd',

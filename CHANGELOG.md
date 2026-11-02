@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Support Ring recordings served from the Amazon Phoenix EU South download host.
+
 ## 0.2.0
 
 - Add Ring capture with entity settings, capture status and latest-frame preview.

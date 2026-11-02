@@ -1,6 +1,6 @@
 {
   "name": "Car Space Checker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "slug": "car_space_checker",
   "description": "Local floodlight parking-space calibration and MQTT sensor (experimental PoC)",
   "url": "https://github.com/JshGrn/car-space-checker",

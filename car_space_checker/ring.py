@@ -40,8 +40,9 @@ def validate_video_url(url):
     try:
         parsed = urlsplit(url)
         host = parsed.hostname or ''
-        allowed = any(host == domain or host.endswith('.' + domain)
-                      for domain in ('ring.com', 'amazonaws.com', 'cloudfront.net'))
+        allowed = (host == 'download-eu-south-2.prod.phoenix.devices.amazon.dev'
+                   or any(host == domain or host.endswith('.' + domain)
+                          for domain in ('ring.com', 'amazonaws.com', 'cloudfront.net')))
         if (parsed.scheme != 'https' or not allowed or parsed.username or parsed.password
                 or parsed.port not in (None, 443)):
             raise ValueError
