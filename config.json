@@ -1,0 +1,20 @@
+{
+  "name": "Car Space Checker",
+  "version": "0.1.0",
+  "slug": "car_space_checker",
+  "description": "Local floodlight parking-space calibration and MQTT sensor (experimental PoC)",
+  "url": "https://github.com/JshGrn/car-space-checker",
+  "arch": ["amd64", "aarch64"],
+  "startup": "application",
+  "boot": "auto",
+  "init": true,
+  "ingress": true,
+  "ingress_port": 8080,
+  "panel_icon": "mdi:car-parking",
+  "panel_title": "Car Space Checker",
+  "panel_admin": true,
+  "services": ["mqtt:need"],
+  "options": {"instance_id": "parking_poc"},
+  "schema": {"instance_id": "match(^[a-z0-9_]{1,64}$)"},
+  "stage": "experimental"
+}

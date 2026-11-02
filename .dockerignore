@@ -1,0 +1,12 @@
+.git
+.ddev
+data
+models
+.env
+.venv
+__pycache__
+.env.*
+dist
+build
+tests
+docs

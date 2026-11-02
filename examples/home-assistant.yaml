@@ -1,0 +1,24 @@
+# Examples to copy into the relevant Home Assistant editors after MQTT discovery.
+# Replace the notification service and verify the discovered entity ID.
+# Do not load this file directly as configuration.yaml: these are separate snippets.
+
+notification_automation:
+  alias: "Parking space is free for charging"
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.parking_space_available
+      to: "on"
+  conditions: []
+  actions:
+    - action: notify.mobile_app_replace_with_your_phone
+      data:
+        title: "Parking space available"
+        message: "A space within charging reach appears clear. Check the camera before moving your car."
+  mode: single
+
+# Paste only this object's contents into a dashboard card's YAML editor.
+dashboard_card:
+  type: tile
+  entity: binary_sensor.parking_space_available
+  name: Space available for charging
+  icon: mdi:car-parking

@@ -1,0 +1,23 @@
+services:
+  checker:
+    build: .
+    ports:
+      - "127.0.0.1:${CHECKER_PORT:-8099}:8080"
+    volumes:
+      - .:/app
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CHECKER_TOKEN: ${CHECKER_TOKEN:-}
+      MQTT_HOST: ${MQTT_HOST:-}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USERNAME: ${MQTT_USERNAME:-}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+      MQTT_TLS: ${MQTT_TLS:-false}
+      CHECKER_ID: ${CHECKER_ID:-parking_poc}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3

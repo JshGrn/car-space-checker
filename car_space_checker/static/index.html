@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Car Space Checker</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body>
+<header><a class="brand" href="./" aria-label="Car Space Checker home"><span class="mark">P</span><span>Car Space Checker<small>FLOODLIGHT · LOCAL PROOF OF CONCEPT</small></span></a><span class="chip" id="model-status">Checking model…</span></header>
+<main>
+<div class="intro"><div><p class="eyebrow">YOUR PARKING PATCH</p><h1>Will there be room?</h1><p>Mark the kerb. Set a reference. Check the space.</p></div><div class="live"><span class="eyebrow">LIVE SENSOR</span><strong id="live-state">Not connected</strong><span id="live-detail">Screenshot checks do not change this sensor.</span></div></div>
+<div class="layout">
+<section class="viewer card">
+<div class="section-head"><div><h2>Floodlight view</h2><p id="image-name">Load a screenshot or a frame from your recording.</p></div><label class="button secondary" for="image-file">Choose image<input id="image-file" type="file" accept="image/jpeg,image/png"></label></div>
+<div class="example-picker"><label for="example">Calibration examples</label><select id="example"><option value="">Choose an example…</option><option value="empty-day">Empty daytime view</option><option value="car-day">Parked reference · valid daytime position</option><option value="car-night">Parked reference · valid night position</option><option value="car-right">Parked reference · valid right-hand position</option></select><p class="hint">Parked-car examples establish size and charging reach. The live sensor checks for an empty space.</p></div><div class="canvas-wrap" id="canvas-wrap"><canvas id="canvas" aria-label="Floodlight image. Click to mark zone corners or reference endpoints." tabindex="0"></canvas><div id="empty"><span class="empty-icon">＋</span><h3>Start with your floodlight image</h3><p>A clear view of the kerb, including a space you know fits.<br>Your image is processed locally.</p><button id="load-sample" class="secondary">Load correct daytime example</button></div></div>
+<div class="toolbar"><div class="segmented"><button id="mark-zone" class="selected">Mark zone</button><button id="mark-reference">Mark reference</button><button id="mark-rear">Rear limits</button><button id="mark-preferred">Ideal position</button></div><div><button id="undo" class="quiet">Undo point</button><button id="clear" class="quiet">Clear marks</button></div></div>
+<p id="mark-help" class="hint">Click the corners of the usable near-side parking strip.</p>
+<div id="result" class="result" hidden aria-live="polite"><span id="result-title"></span><p id="result-detail"></p><a id="download" download="parking-assessment.jpg">Download marked result</a></div>
+<div id="detections" class="detections"></div>
+</section>
+<aside class="card setup">
+<div class="step"><span class="number">1</span><div><h2>Define the parking zone</h2><p>Use the near-side kerb in front of the right-hand wall and to its right. Include any space to the left needed for a left-facing car’s front.</p></div></div>
+<label for="method">What should we check?</label><select id="method"><option value="gap">Room for a reference space</option><option value="whole_zone">Entire marked zone is clear</option></select>
+<p class="hint">For gap estimates, mark four corners of a ground-plane rectangle. Start with the two ends of the far edge, along the kerb, then the near edge in reverse order.</p>
+<div class="divider"></div>
+<div class="step"><span class="number">2</span><div><h2>Use an image as the reference</h2><p>Mark the two ends of a gap you know fits, or your parked car’s length projected onto the road. No make or model needed.</p></div></div>
+<label for="reference-kind">Reference image shows</label><select id="reference-kind"><option value="known_fit">A gap I know is parkable</option><option value="parked_car">My car parked in the space</option></select>
+<label for="clearance">Extra room <span id="clearance-label">0%</span></label><input id="clearance" type="range" min="0" max="60" value="0" step="5"><p class="hint">A known-fit gap already includes room to manoeuvre. Add a margin when using your car’s footprint.</p>
+<p class="hint">Use <strong>Rear limits</strong> to mark where the rear can sit within cable reach: just right of the bin to the furthest reachable point. Use <strong>Ideal position</strong> to favour a car centred in front of the right-hand wall. Place these marks on the road, not on the bin or wall.</p><div class="calibration" id="calibration">Zone: 0 points · Reference: 0 points</div>
+<div class="divider"></div>
+<button id="analyze" class="primary" disabled>Check this image</button><button id="save" class="secondary full" disabled>Save floodlight setup</button>
+<label class="checkbox"><input id="live-enabled" type="checkbox"><span>Enable live observations with this setup</span></label>
+<p class="hint">Requires a parked-car reference and rear limits. Keep this off until validated against fresh footage. Historical screenshots never publish parking availability.</p>
+<div id="message" role="status" aria-live="polite"></div>
+</aside>
+</div>
+<footer><span>LOCAL ANALYSIS · FLOODLIGHT IMAGES ONLY</span><p>Gap estimates compare with your reference. Wide-angle distortion, hidden objects and uncertain detections need checking against real examples.</p></footer>
+</main>
+</body></html>
